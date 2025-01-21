@@ -12,7 +12,7 @@ builder.Services.AddControllers(options =>
 });
 builder.Services.AddScoped<ExecutionTimeActionFilter>();
 
-// **Azure - Application Insights**: Configura o Application Insights para monitoramento e rastreamento
+//Configura o Application Insights para monitoramento e rastreamento
 // O Application Insights permite monitorar o desempenho da aplicação, detectar falhas, e coletar métricas e logs automaticamente.
 builder.Services.AddApplicationInsightsTelemetry(builder.Configuration["ApplicationInsights:ConnectionString"]);
 
@@ -45,7 +45,7 @@ builder.Services.AddCors(options =>
                         .AllowAnyHeader());
 });
 
-// **Prometheus**: Configura o Prometheus para coletar métricas sobre as requisições HTTP
+// Configura o Prometheus para coletar métricas sobre as requisições HTTP
 var httpRequestsCounter = Metrics.CreateCounter(
     "http_requests_total",  // Nome da métrica
     "Número total de requisições HTTP recebidas e seus resultados.",  // Descrição da métrica
@@ -79,7 +79,7 @@ app.Use(async (context, next) =>
     }
 });
 
-// **Prometheus**: Expondo as métricas para que o Prometheus as colete
+//Expondo as métricas para que o Prometheus as colete
 app.UseApplicationInsightsRequestTelemetry();  // Usado para integração com Application Insights
 app.UseMetricServer();  // Expondo métricas do Prometheus na rota /metrics
 
