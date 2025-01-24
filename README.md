@@ -1,6 +1,6 @@
 API - Multitarefa
 
-Uma API desenvolvida em C# com .NET Framework, seguindo a arquitetura MVC e integrada ao PostgreSQL para gerenciamento de dados. Projetada para oferecer alto desempenho, escalabilidade e integração com o Azure.
+Uma API desenvolvida em C# com .NET Framework, seguindo a arquitetura MVC e integrada ao PostgreSQL para gerenciamento de dados. Projetada para oferecer escalabilidade e integração com o Azure.
 
  Recursos Principais
  
@@ -16,26 +16,8 @@ Linguagem: C#
 Framework: .NET
 Arquitetura: MVC (Model-View-Controller)
 Banco de Dados: PostgreSQL
-Nuvem: Microsoft Azure (ex.: App Service, Blob Storage, ou outros serviços específicos)
+Nuvem: Microsoft Azure 
 
- Instalação
- 
-Pré-requisitos:
-.NET SDK instalado (Download .NET SDK).
-PostgreSQL configurado e em execução.
-Azure CLI configurado (se for utilizar recursos do Azure).
-
-Clone o Repositório:
-
-git clone https://github.com/Leo-Gandolfi/MultitarefaAPI.git
-
-Configure o Banco de Dados:
-
-Atualize a string de conexão no arquivo appsettings.json com os detalhes do seu banco de dados, nesse caso, PSQL:
-
-"ConnectionStrings": {  
-  "DefaultConnection": "Host=localhost;Database=seu_banco;Username=seu_usuario;Password=sua_senha"  
-}  
 
  Endpoints Principais
 ![swagger](https://github.com/user-attachments/assets/29ee5611-483f-4a1d-b3a7-b1cc76a0a50c)
@@ -56,6 +38,3 @@ Essas informações são enviadas para o Azure, onde podem ser analisadas em das
 ![insight-errors](https://github.com/user-attachments/assets/463198c4-c965-48fd-b190-8717bfc38508)
 
 
- Licença
-Este projeto está licenciado sob a Licença MIT.
-https://mit-license.org/
