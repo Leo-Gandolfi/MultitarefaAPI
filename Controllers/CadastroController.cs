@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.ApplicationInsights;  // Biblioteca para Azure Application Insights
+using Microsoft.ApplicationInsights;
 using MultitarefaAPI.Models;
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc.Filters;
@@ -9,25 +9,24 @@ namespace MultitarefaAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [ServiceFilter(typeof(ExecutionTimeActionFilter))] // O filtro de execução de tempo é registrado no Program.cs
+    [ServiceFilter(typeof(ExecutionTimeActionFilter))]
     public class CadastroController : ControllerBase
     {
         private readonly CadastroContext _context;
-        private readonly TelemetryClient _telemetryClient;  // Usado para o Azure Application Insights
+        private readonly TelemetryClient _telemetryClient;
 
         public CadastroController(CadastroContext context, TelemetryClient telemetryClient)
         {
             _context = context;
-            _telemetryClient = telemetryClient;  // Inicialização do cliente para enviar métricas ao Azure
+            _telemetryClient = telemetryClient;
         }
 
-        // GET: api/Cadastro
         [HttpGet]
         public async Task<ActionResult> GetCadastros([FromQuery] int page = 1, [FromQuery] int pageSize = 10)
         {
             try
             {
-                pageSize = Math.Min(pageSize, 100); // Limita o máximo de itens por página a 100
+                pageSize = Math.Min(pageSize, 100);
                 var cadastros = await _context.Cadastros
                     .Skip((page - 1) * pageSize)
                     .Take(pageSize)
@@ -45,17 +44,15 @@ namespace MultitarefaAPI.Controllers
                     })
                     .ToListAsync();
 
-                return Ok(new { success = true, data = cadastros });
+                return Ok(cadastros);
             }
             catch (Exception ex)
             {
-                // Envio da exceção para o Azure Application Insights
                 _telemetryClient.TrackException(ex);
                 return StatusCode(StatusCodes.Status500InternalServerError, new { success = false, message = "Erro ao buscar cadastros." });
             }
         }
 
-        // GET: api/Cadastro/5
         [HttpGet("{id}")]
         public async Task<ActionResult> GetCadastro(int id)
         {
@@ -72,13 +69,11 @@ namespace MultitarefaAPI.Controllers
             }
             catch (Exception ex)
             {
-                // Envio da exceção para o Azure Application Insights
                 _telemetryClient.TrackException(ex);
                 return StatusCode(StatusCodes.Status500InternalServerError, new { success = false, message = "Erro ao buscar cadastro." });
             }
         }
 
-        // POST: api/Cadastro
         [HttpPost]
         public async Task<ActionResult> PostCadastro(Cadastro cadastro)
         {
@@ -89,8 +84,8 @@ namespace MultitarefaAPI.Controllers
                     return BadRequest(new { success = false, message = "Dados inválidos.", errors = ModelState });
                 }
 
-                cadastro.dataAbertura = DateOnly.FromDateTime(DateTime.Now); // Define a data de criação
-                cadastro.saldoInicial = Math.Max(cadastro.saldoInicial, 0); // Valida saldo inicial
+                cadastro.dataAbertura = DateOnly.FromDateTime(DateTime.Now);
+                cadastro.saldoInicial = Math.Max(cadastro.saldoInicial, 0);
 
                 _context.Cadastros.Add(cadastro);
                 await _context.SaveChangesAsync();
@@ -99,13 +94,11 @@ namespace MultitarefaAPI.Controllers
             }
             catch (Exception ex)
             {
-                // Envio da exceção para o Azure Application Insights
                 _telemetryClient.TrackException(ex);
                 return StatusCode(StatusCodes.Status500InternalServerError, new { success = false, message = "Erro ao salvar cadastro." });
             }
         }
 
-        // PUT: api/Cadastro/5
         [HttpPut("{id}")]
         public async Task<IActionResult> PutCadastro(int id, Cadastro cadastro)
         {
@@ -130,19 +123,16 @@ namespace MultitarefaAPI.Controllers
             }
             catch (DbUpdateConcurrencyException ex)
             {
-                // Envio da exceção para o Azure Application Insights
                 _telemetryClient.TrackException(ex);
                 return Conflict(new { success = false, message = "Houve um conflito de concorrência." });
             }
             catch (Exception ex)
             {
-                // Envio da exceção para o Azure Application Insights
                 _telemetryClient.TrackException(ex);
                 return StatusCode(StatusCodes.Status500InternalServerError, new { success = false, message = "Erro ao atualizar cadastro." });
             }
         }
 
-        // DELETE: api/Cadastro/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteCadastro(int id)
         {
@@ -161,7 +151,6 @@ namespace MultitarefaAPI.Controllers
             }
             catch (Exception ex)
             {
-                // Envio da exceção para o Azure Application Insights
                 _telemetryClient.TrackException(ex);
                 return StatusCode(StatusCodes.Status500InternalServerError, new { success = false, message = "Erro ao deletar cadastro." });
             }
@@ -183,7 +172,7 @@ namespace MultitarefaAPI.Controllers
 
     public class ExecutionTimeActionFilter : IActionFilter
     {
-        private readonly TelemetryClient _telemetryClient;  // Usado para o Azure Application Insights
+        private readonly TelemetryClient _telemetryClient;
 
         public ExecutionTimeActionFilter(TelemetryClient telemetryClient)
         {
@@ -201,12 +190,10 @@ namespace MultitarefaAPI.Controllers
             stopwatch.Stop();
             var elapsedTime = stopwatch.ElapsedMilliseconds;
 
-            // Envia o tempo de execução para o Azure Application Insights
             _telemetryClient.TrackMetric("ActionExecutionTime", elapsedTime);
 
             if (context.Exception != null)
             {
-                // Envio da exceção para o Azure Application Insights
                 _telemetryClient.TrackException(context.Exception);
                 context.HttpContext.Response.StatusCode = StatusCodes.Status500InternalServerError;
             }
